@@ -11,7 +11,7 @@ resource "google_compute_network" "vpc_network" {
   mtu                     = 1460
 }
 
-resource "google_compute_subnetwork" "default" {
+resource "google_compute_subnetwork" "my_subnetnetwork" {
   name          = "my-custom-subnet"
   ip_cidr_range = "10.0.1.0/24"
   region        = "asia-southeast2"
@@ -19,7 +19,7 @@ resource "google_compute_subnetwork" "default" {
 }
 
 # Create a single Compute Engine instance
-resource "google_compute_instance" "default" {
+resource "google_compute_instance" "my_instance" {
   name         = "flask-vm"
   machine_type = "f1-micro"
   zone         = "asia-southeast2-a"
@@ -35,7 +35,7 @@ resource "google_compute_instance" "default" {
   metadata_startup_script = "sudo apt-get update; sudo apt-get install -yq build-essential python3-pip rsync; pip install flask"
 
   network_interface {
-    subnetwork = google_compute_subnetwork.default.id
+    subnetwork = google_compute_subnetwork.my_subnetnetwork.id
 
     access_config {
       # Include this section to give the VM an external IP address
@@ -70,5 +70,5 @@ resource "google_compute_firewall" "flask" {
 
 // A variable for extracting the external IP address of the VM
 output "Web-server-URL" {
- value = join("",["http://",google_compute_instance.default.network_interface.0.access_config.0.nat_ip,":5000"])
+ value = join("",["http://",google_compute_instance.my_instance.network_interface.0.access_config.0.nat_ip,":5000"])
 }
